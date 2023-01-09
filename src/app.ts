@@ -173,7 +173,6 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
         this.configure();
         this.renderContent();
     }
-
     configure(){
         projectState.addListener((projects: Project[]) => {
         const relevantProjects = projects.filter(prj => {
