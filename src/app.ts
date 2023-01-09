@@ -14,17 +14,24 @@ class Project {
 
 
 //Project state management
-type Listener = (items: Project[]) => void;
+type Listener<T> = (items: T[]) => void;
+
+class State<T> {
+    protected listeners: Listener<T>[] = [];
+
+    addListener(listenerFn: Listener<T>) {
+        this.listeners.push(listenerFn)
+    }
+}
 
 
-class ProjectState {
-    private listeners: Listener[] = [];
+class ProjectState extends State<Project> {
     private projects: Project[] = [];
     private static instance: ProjectState;
 
 
     private constructor() {
-
+        super()
     }
 
     static getInstance() {
@@ -36,9 +43,6 @@ class ProjectState {
         return this.instance;
     }
 
-    addListener(listenerFn: Listener) {
-        this.listeners.push(listenerFn);
-    }
 
     addProject(title: string, description: string, numOfPeople: number ) {
         const newProject = new Project(
@@ -116,7 +120,6 @@ function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
         get() {
             const boundFn = originalMethod.bind(this);
             return boundFn;
-
         }
     }
     return adjDescriptor;
@@ -149,8 +152,6 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
     }
 
     this.attach(insertAtStart);
-    this.renderContent
-    this.configure()
   }
 
   private attach(insertAtBeginning: boolean) {
@@ -188,7 +189,8 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
     renderContent() {
         const listId = `${this.type}-projects-list`
         this.element.querySelector('ul')!.id = listId;
-        this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + ' PROJECTS';
+        this.element.querySelector('h2')!.textContent =
+            this.type.toUpperCase() + ' PROJECTS';
     }
 
     private renderProjects() {
